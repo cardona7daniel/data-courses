@@ -1,5 +1,5 @@
-import React, { createContext, useState } from 'react';
-import { fakeAuthProvider } from "../container/auth";
+import React, { createContext, useState, useEffect } from 'react';
+import { authProvider } from "../container/auth";
 
 let AuthContext = createContext(null);
 
@@ -16,19 +16,30 @@ export function useAuth() {
 
 export function AuthProvider({ children }) {
   let [user, setUser] = useState(null);
+  useEffect(() => {
+    if (user === null) {
+      const userData = JSON.parse(sessionStorage.getItem('user'));
+      userData && setUser(userData);
+    }
+  }, [user]);
 
-  let signin = (newUser, callback) => {
-    // TODO: Replace for nest API to login
-    return fakeAuthProvider.signin(() => {
-      setUser(newUser);
+  let signin = (user, callback) => {
+    return authProvider.signin(user, (response) => {
+      if (response) {
+        setUser(response);
+        sessionStorage.setItem('user', JSON.stringify(response));
+      } else {
+        setUser(null);
+        sessionStorage.setItem('user', JSON.stringify(null));
+      }
       callback();
     });
   };
 
   let signout = (callback) => {
-    // TODO: Replace for nest API to logout
-    return fakeAuthProvider.signout(() => {
+    return authProvider.signout(() => {
       setUser(null);
+      sessionStorage.setItem('user', JSON.stringify(null));
       callback();
     });
   };

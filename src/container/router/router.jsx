@@ -11,6 +11,7 @@ export const RouterController = () => (
         config.requireAuth ? (
           <Route
             key={i}
+            exact={config.exact || false}
             path={config.path}
             element={
               <RequireAuth>

@@ -18,11 +18,7 @@ import styled from "@emotion/styled";
 import { useNavigate, Outlet, Link } from "react-router-dom";
 
 import { useAuth } from "../../hooks";
-
-const pages = [
-  { label: "Cursos", route: "/", id: 1 },
-];
-const settings = [{ label: "Cerrar Sesión", callbackName: "logoutFn", id: 1 }];
+import { navbarPagesConfig, navbarProfileConfig } from '../../config/navbar.config';
 
 const LinkStyled = styled(Link)`
   text-decoration: none;
@@ -122,7 +118,7 @@ export const Header = () => {
                 }}
               >
                 { auth.user ?
-                  pages.map((page) => (
+                  navbarPagesConfig.map((page) => (
                     <MenuItem key={page.id} onClick={handleCloseNavMenu}>
                       <Typography textAlign="center">
                         <LinkStyled to={page.route}>{page.label}</LinkStyled>
@@ -154,7 +150,7 @@ export const Header = () => {
             </Typography>
             <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
               { auth.user ?
-                pages.map((page) => (
+                navbarPagesConfig.map((page) => (
                     <Button
                       key={page.id}
                       onClick={handleCloseNavMenu}
@@ -190,7 +186,7 @@ export const Header = () => {
                   open={Boolean(anchorElUser)}
                   onClose={handleCloseUserMenu}
                 >
-                  {settings.map((setting) => (
+                  {navbarProfileConfig.map((setting) => (
                     <MenuItem
                       key={setting.id}
                       onClick={() => {

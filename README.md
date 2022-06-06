@@ -68,3 +68,13 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+
+Almost there …
+Please check your email (cardona7daniel@gmail.com)
+to confirm your account.
+If cardona7daniel@gmail.com is not your email address, please go back and enter the correct one.
+
+If you haven't received our email in 15 minutes, please check your spam folder.
+
+Still can't find it? Try searching Gmail for in:all subject:(Confirm your account on Heroku)

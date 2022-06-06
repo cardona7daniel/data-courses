@@ -3,13 +3,10 @@ import {
     Navigate
   } from "react-router-dom";
 
-  import { useAuth } from "../../hooks";
-
 export function RequireAuth({ children }) {
-  let auth = useAuth();
   let location = useLocation();
-
-  if (!auth.user) {
+  const userData = JSON.parse(sessionStorage.getItem('user'));
+  if (!userData) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 

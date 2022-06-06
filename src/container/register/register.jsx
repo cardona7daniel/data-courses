@@ -10,7 +10,10 @@ import FormHelperText from "@mui/material/FormHelperText";
 import InputLabel from "@mui/material/InputLabel";
 import FormControl from "@mui/material/FormControl";
 
+import Snackbar from '../../components/snackbar';
+import Backdrop from '../../components/backdrop';
 import { regexConfig } from '../../constants/regex';
+import { saveRegisterUserApi } from '../../api/register';
 
 const Container = styled.div`
   display: flex;
@@ -18,21 +21,45 @@ const Container = styled.div`
   justify-content: center;
 `;
 
+const alertConf = {
+  success: 'El usuario ha sido creado existosamente!',
+  error: 'Ha ocurrido un error creando el usuario, por favor intente de nuevo!',
+};
+
 export function RegisterPage() {
   let navigate = useNavigate();
-  const [username, setUsername] = useState("");
+  const [name, setName] = useState("");
+  const [email, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState("");
   const [usernameError, setUsernameError] = useState(null);
+  const [nameError, setNameError] = useState(null);
   const [passwordError, setPasswordError] = useState(null);
   const [confirmPasswordError, setConfirmPasswordError] = useState(null);
   const [roleError, setRoleError] = useState(null);
   const [usernameMessageError, setUsernameMessageError] = useState(null);
+  const [nameMessageError, setNameMessageError] = useState(null);
   const [passwordMessageError, setPasswordMessageError] = useState(null);
   const [confirmPasswordMessageError, setConfirmPasswordMessageError] =
     useState(null);
   const [roleMessageError, setRoleMessageError] = useState(null);
+  const [showBackdrop, setShowBackdrop] = useState(false);
+  const [registerState, setRegisterState] = useState('success');
+  const [showRegisterAlert, setShowRegisterAlert] = useState(false);
+
+  const resetForm = () => {
+    setName("");
+    setUsername("");
+    setPassword("");
+    setConfirmPassword("");
+    setRole("");
+    setUsernameError(null);
+    setNameError(null);
+    setPasswordError(null);
+    setConfirmPasswordError(null);
+    setRoleError(null);
+  };
 
   const roleChange = (event) => {
     const value = event.target.value;
@@ -71,6 +98,16 @@ export function RegisterPage() {
     }
   };
 
+  const validateNameRequired = (value) => {
+    if (!value || value.length === 0) {
+      setUsernameMessageError("El nombre es obligatorio");
+      setNameError(true);
+    } else {
+      setNameMessageError("");
+      setNameError(false);
+    }
+  };
+
   const validatePasswordRequired = (value) => {
     if (!value || value.length === 0) {
       setPasswordMessageError("La contraseña es obligatoria");
@@ -101,6 +138,12 @@ export function RegisterPage() {
     }
   };
 
+  const handleNameChange = (event) => {
+    const value = event.target.value;
+    setName(value);
+    validateNameRequired(value);
+  };
+
   const handleUsernameChange = (event) => {
     const value = event.target.value;
     setUsername(value);
@@ -121,12 +164,35 @@ export function RegisterPage() {
     validateMatchPassword(value, password);
   };
 
-  function handleSubmit(event) {
+  const handleSubmit = (event) => {
     event.preventDefault();
-    navigate("/login");
+    setShowBackdrop(true);
+    saveRegisterUserApi({
+      email,
+      password,
+      name,
+      role
+    }).then(response => {
+      setRegisterState('success');
+    }).catch(error => {
+      setRegisterState('error');
+    }).finally(() => {
+      setShowBackdrop(false);
+      setShowRegisterAlert(true);
+      resetForm();
+    })
   }
 
+  const alertWasClosed = () => {
+    setShowRegisterAlert(false);
+  }
+
+  const navigateLogin = () => {
+    navigate('/login');
+  };
+
   return (
+    <>
     <Container>
       <Box
         component="form"
@@ -140,17 +206,29 @@ export function RegisterPage() {
           border: "1px solid #d8d8d8",
           borderRadius: "8px",
           padding: "24px",
+          background: "#fafafa"
         }}
       >
         <TextField
           required
-          id="username"
-          name="username"
+          id="name"
+          name="name"
+          label="Nombre completo"
+          variant="outlined"
+          helperText={nameMessageError}
+          error={nameError}
+          value={name}
+          onChange={handleNameChange}
+        />
+        <TextField
+          required
+          id="email"
+          name="email"
           label="Correo"
           variant="outlined"
           helperText={usernameMessageError}
           error={usernameError}
-          value={username}
+          value={email}
           onChange={handleUsernameChange}
         />
         <TextField
@@ -211,7 +289,19 @@ export function RegisterPage() {
         >
           Registrarse
         </Button>
+        <Button
+          type="button"
+          variant="text"
+          onClick={navigateLogin}
+        >
+          Ya tengo una cuenta
+        </Button>
       </Box>
     </Container>
+    <Snackbar type={registerState} open={showRegisterAlert} closed={alertWasClosed}>
+      {alertConf[registerState]}
+    </Snackbar>
+    <Backdrop open={showBackdrop}></Backdrop>
+    </>
   );
 }

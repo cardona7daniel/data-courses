@@ -3,7 +3,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
 import styled from "@emotion/styled";
+import { Link } from "react-router-dom";
 
 import { useAuth } from "../../hooks";
 import { regexConfig } from '../../constants/regex';
@@ -12,6 +14,16 @@ const Container = styled.div`
   display: flex;
   width: 100%;
   justify-content: center;
+`;
+
+const LinkStyled = styled(Link)`
+  text-decoration: none;
+  color: #027373;
+
+  &:hover {
+    color: #038c7f;
+    text-decoration: underline;
+  }
 `;
 
 export function LoginPage() {
@@ -71,13 +83,17 @@ export function LoginPage() {
 
   let from = location.state?.from?.pathname || "/";
 
-  function handleSubmit(event) {
+  const handleSubmit = (event) => {
     event.preventDefault();
 
-    auth.signin({ username, password }, () => {
+    auth.signin({ email: username, password }, () => {
       navigate(from, { replace: true });
     });
   }
+
+  const navigateRegister = () => {
+    navigate('/register');
+  };
 
   return (
     <Container>
@@ -87,12 +103,13 @@ export function LoginPage() {
         noValidate
         autoComplete="off"
         sx={{
-          "& > :not(style)": { m: 1, width: "500px" },
+          "& > :not(style)": { m: 1, width: "400px" },
           display: "flex",
           flexDirection: "column",
           border: "1px solid #d8d8d8",
           borderRadius: "8px",
           padding: "24px",
+          background: "#fafafa"
         }}
       >
         <TextField
@@ -127,6 +144,16 @@ export function LoginPage() {
           }
         >
           Iniciar sesión
+        </Button>
+        <Typography textAlign="center">
+          <LinkStyled to="/register">Olvidé mi contraseña</LinkStyled>
+        </Typography>
+        <Button
+          type="button"
+          variant="text"
+          onClick={navigateRegister}
+        >
+          Crear nueva cuenta
         </Button>
       </Box>
     </Container>

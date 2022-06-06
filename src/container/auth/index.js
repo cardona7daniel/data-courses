@@ -1,2 +1,2 @@
-export { fakeAuthProvider } from './auth';
+export { authProvider } from './auth';
 export * from './require-auth';
